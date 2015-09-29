@@ -1,11 +1,13 @@
 /* globals todo, XMLHttpRequest */
 todo.api = {
   sendRequest: function(options, callback){
+    console.log('sending request');
     // create a new Ajax request
     var request = new XMLHttpRequest();
     request.open(options.method, options.endpoint, true);
 
     request.onload = function() {
+      console.log('onload');
       if (request.status >= 200 && request.status < 400){
         // Success!
         var data = JSON.parse(request.responseText);
