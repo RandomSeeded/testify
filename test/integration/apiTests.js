@@ -1,19 +1,24 @@
 describe('API integration', function(){
-  var server, setupStub, JSONresponse;
+  var server, setupStub;
+  var JSONresponse = JSON.stringify({todos: ['1', '2', '3']});
 
   beforeEach(function() {
-    //server = sinon.fakeServer.create(); // how do we make sure this is used?
-    // setupStub = sinon.stub(todo, "setup", function() {
-    //   console.log('setup');
-    // });
+    server = sinon.fakeServer.create();
+    server.respondWith([200, { "Content-Type": "application/json" }, JSONresponse]);
+    setupStub = sinon.stub(todo, "setup", function() {
+    });
   });
   
   afterEach(function() {
-    //todo.setup.restore();
+    todo.setup.restore();
   });
 
-  it('todo.setup receives an array of todos when todo.init is called', function () {
+  it('todo.setup receives an array of todos when todo.init is called', function (done) {
     todo.init();
+    server.respond();
+    setTimeout(function() {
+      assert(setupStub.calledWith(['1','2','3']));
+      done();
+    }, 1000);
   });
-  // NOTE: currently the onload callback in the todo.api.js is never being called. Unclear as to why; the server is responding just fine, and onerror isn't called either. Possibly a chromium thing?
 });
